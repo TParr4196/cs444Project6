@@ -37,6 +37,7 @@ int find_free(unsigned char *block){
         }
     }
 
+    //will only return if every byte is full
     return -1;
     //source for continue block and byte declaration is ffz.c from discord
 }
