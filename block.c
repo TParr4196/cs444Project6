@@ -1,5 +1,6 @@
 #include "block.h"
 #include "image.h"
+#include "free.c"
 #include <stdio.h>
 #include <unistd.h>
 
