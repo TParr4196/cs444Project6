@@ -1,5 +1,6 @@
 #include "image.h"
 #include "block.h"
+#include "free.h"
 #include "ctest.h"
 
 #ifdef CTEST_ENABLE

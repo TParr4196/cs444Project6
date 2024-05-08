@@ -13,13 +13,16 @@ test: testfs
 testfs: libvvsfs.a
 	$(CC) $(CCOPTS) -o $@ $(LIBS)
 
-libvvsfs.a: block.o image.o testfs.o
+libvvsfs.a: block.o image.o free.o testfs.o
 	ar rcs $@ $^
 
 block.o: block.c
 	$(CC) $(CCOPTS) -c $^
 
 image.o: image.c
+	$(CC) $(CCOPTS) -c $^
+
+free.o: free.c
 	$(CC) $(CCOPTS) -c $^
 
 testfs.o: testfs.c
