@@ -5,20 +5,30 @@
 #define BITS_PER_BYTE 8
 
 void set_free(unsigned char *block, int num, int set){
+
+    //retrieve the byte that corresponds to num, and the bit index in that byte
     int byte=block[num/BITS_PER_BYTE];
     int bit_index=num % BITS_PER_BYTE;
-    block[num/BITS_PER_BYTE]=(byte &(1 << bit_index)) | (set << bit_index);
-    //source is bitmanip.c from discord: my solution was much clunkier 
+
+    //the bitwise operations here are bitwise shifted left by bit_index
+    //first AND the existing bit with a byte that is all 1's except bit_index\
+    //This allows us to make sure the rest of the byte is unchanged 
+    //Then OR that result with the value in set
+    block[num/BITS_PER_BYTE]=(byte &~(1 << bit_index)) | (set << bit_index);
+    //source is bitmanip.c from discord: my solution was much clunkier
 }
 
 int find_free(unsigned char *block){
     unsigned char byte;
 
+    //loops through every byte in the block
     for (int i = 0; i < BLOCK_SIZE; i++) {
         byte = block[i];
+        //skip the byte if it is 11111111
         if (byte == 0xff)
             continue;
 
+        //loops through every bit in the byte
         for (int j = 0; j < BITS_PER_BYTE; j++) {
             if (!(byte & (1 << j)))
                 return i * BITS_PER_BYTE + j;
