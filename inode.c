@@ -10,9 +10,9 @@ int ialloc(void){
 
     //find and set as used first available free inode
     int index=find_free(buffer);
-    if (index<0){
+    if (index<0)
         return -1;
-    }
+    
     set_free(buffer, index, 1);
 
     //write new map back out to disk

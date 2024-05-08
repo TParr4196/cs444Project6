@@ -16,10 +16,9 @@ void test_image_close(void){
 
 void test_bread_bwrite(void){
     unsigned char block_map[4096]={1,1,1,1,1,1};
-    CTEST_ASSERT(bread(2,block_map)==block_map, "bread returns buffer");
+    bwrite(2,block_map);
     unsigned char buffer[4096]={0};
-    bwrite(2,buffer);
-    CTEST_ASSERT(*buffer==*block_map, "bwrite fills buffer with disk image and bread was successful");
+    CTEST_ASSERT(*bread(2,buffer)==*block_map, "bwrite fills buffer with disk image and bread was successful");
 }
 
 //void test_alloc(void){}
@@ -46,7 +45,7 @@ void test_find_free(void){
     for(int i=0; i<BLOCK_SIZE; i++){
         block[i]=0xff;
     }
-    CTEST_ASSERT(find_free(block)==-1, "find free returns -1 if block is full");
+    CTEST_ASSERT(find_free(block)==-1, "find_free returns -1 if block is full");
     set_free(block, 2, 0);
     set_free(block, 5, 0);
     set_free(block, 12, 0);
@@ -61,7 +60,14 @@ void test_find_free(void){
     CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "find_free arbitrary empty values verified");
 }
 
-//void test_ialloc(void){}
+void test_ialloc(void){
+    unsigned char block[4096]={0};
+    for(int i=0; i<BLOCK_SIZE; i++){
+        block[i]=0xff;
+    }
+    bwrite(1, block);
+    CTEST_ASSERT(ialloc()==-1, "returns -1 if inode map is full");
+}
 
 int main(){
     CTEST_VERBOSE(1);
@@ -74,9 +80,9 @@ int main(){
 
     test_find_free();
 
-    //test_alloc();
+    test_ialloc();
 
-    //test_ialloc();
+    //test_alloc();
 
     test_image_close();
 
@@ -91,27 +97,25 @@ int main(){
 
     image_open("image.txt",0);
 
-    unsigned char superblock[4096]={0};
-    bread(0,superblock);
+    //initialize an empty data block
+    unsigned char block[4096]={0};
+    for(int i=0; i<BLOCK_SIZE; i++){
+        block[i]=0x0;
+    }
 
-    unsigned char inode_map[4096]={0};
-    bread(1,inode_map);
+    //not sure what goes in the superblock so giving it empty block
+    bread(0,block); //superblock
+    bread(1,block); //inode_map
+    bread(3,block); //inode_data_block_0
+    bread(4,block); //inode_data_block_1
+    bread(5,block); //inode_data_block_2
+    bread(6,block); //inode_data_block_3
 
-    unsigned char block_map[4096]={0};
-    bread(2,block_map);
+    for(int i=0; i<7; i++){
+        set_free(block, i,1);
+    }
 
-    unsigned char inode_data_block_0[4096]={0};
-    bread(3,inode_data_block_0);
-
-    unsigned char inode_data_block_1[4096]={0};
-    bread(4,inode_data_block_1);
-
-    unsigned char inode_data_block_2[4096]={0};
-    bread(5,inode_data_block_2);
-
-    unsigned char inode_data_block_3[4096]={0};
-    bread(6,inode_data_block_3);
-    //initialize the data blocks as empty
+    bread(2,block); //block_map
     
     image_close();
 }
