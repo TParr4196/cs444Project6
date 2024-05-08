@@ -32,7 +32,19 @@ void bwrite(int block_num, unsigned char *block){
 }
 
 int alloc(void){
+    //get block map
+    unsigned char buffer[4096]={0};
+    bread(2, buffer);
 
+    //find and set as used first available free block
+    int index=find_free(buffer);
+    if (index<0){
+        return -1;
+    }
+    set_free(buffer, index, 1);
 
-    return -1;
+    //write new map back out to disk
+    bwrite(2, buffer);
+
+    return index;
 }
