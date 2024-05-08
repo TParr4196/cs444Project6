@@ -48,7 +48,7 @@ int main(){
     unsigned char inode_map[4096]={0};
     bread(1,inode_map);
 
-    unsigned char block_map[4096]={1,1,1,1,1,1};
+    unsigned char block_map[4096]={1,1,1,1,1,1,1};
     bread(2,block_map);
 
     unsigned char inode_data_block_0[4096]={0};
@@ -61,7 +61,7 @@ int main(){
     bread(5,inode_data_block_2);
 
     unsigned char inode_data_block_3[4096]={0};
-    bread(3,inode_data_block_3);
+    bread(6,inode_data_block_3);
 
     //unsure what the data blocks should contain other than block map so left empty for now
     

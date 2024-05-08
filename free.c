@@ -11,9 +11,9 @@ void set_free(unsigned char *block, int num, int set){
     int bit_index=num % BITS_PER_BYTE;
 
     //the bitwise operations here are bitwise shifted left by bit_index
-    //first AND the existing bit with a byte that is all 1's except bit_index\
+    //first AND the existing byte with a byte that is all 1's except bit_index
     //This allows us to make sure the rest of the byte is unchanged 
-    //Then OR that result with the value in set
+    //Then OR that result with the value in set to set bit_index to set
     block[num/BITS_PER_BYTE]=(byte &~(1 << bit_index)) | (set << bit_index);
     //source is bitmanip.c from discord: my solution was much clunkier
 }
@@ -30,6 +30,8 @@ int find_free(unsigned char *block){
 
         //loops through every bit in the byte
         for (int j = 0; j < BITS_PER_BYTE; j++) {
+
+            //returns true if byte left shifted j is 0 aka free
             if (!(byte & (1 << j)))
                 return i * BITS_PER_BYTE + j;
         }
