@@ -7,25 +7,16 @@ TARGETS=$(SRCS:.c=)
 
 .PHONY: clean pristine test
 
-test: testfs
-	./testfs
-
 testfs: libvvsfs.a
 	$(CC) $(CCOPTS) -o $@ $(LIBS)
 
-libvvsfs.a: block.o image.o free.o testfs.o
+test: testfs
+	./testfs
+
+libvvsfs.a: block.o image.o free.o testfs.o inode.o
 	ar rcs $@ $^
 
-block.o: block.c
-	$(CC) $(CCOPTS) -c $^
-
-image.o: image.c
-	$(CC) $(CCOPTS) -c $^
-
-free.o: free.c
-	$(CC) $(CCOPTS) -c $^
-
-testfs.o: testfs.c
+%.o: %.c
 	$(CC) $(CCOPTS) -c $^
 
 clean:

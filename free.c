@@ -1,5 +1,6 @@
 #include "image.h"
 #include "block.h"
+#include "free.h"
 
 #define BITS_PER_BYTE 8
 

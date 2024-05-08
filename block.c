@@ -30,3 +30,9 @@ void bwrite(int block_num, unsigned char *block){
     if(chk<0) fprintf(stderr, "write failed");
     //read from the buffer to the "disk" and check if it worked
 }
+
+int alloc(void){
+
+
+    return -1;
+}
