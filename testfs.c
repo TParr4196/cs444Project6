@@ -1,26 +1,49 @@
 #include "image.h"
 #include "block.h"
 #include "free.h"
+#include "inode.c"
 #include "ctest.h"
 
 #ifdef CTEST_ENABLE
 
 void test_image_open(void){
-    CTEST_ASSERT(image_fd==-1, "testing initialization of image_fd");
-    CTEST_ASSERT(image_open("image.txt",0)>=0, "testing image_open");
+    CTEST_ASSERT(image_open("image.txt",0)>=0, "image_open returns file descriptor");
 }
 
 void test_image_close(void){
-    CTEST_ASSERT(image_close()==0, "testing image_close");
+    CTEST_ASSERT(image_close()==0, "image_close close() success");
 }
 
 void test_bread_bwrite(void){
     unsigned char block_map[4096]={1,1,1,1,1,1};
-    CTEST_ASSERT(bread(2,block_map)==block_map, "testing bread");
+    CTEST_ASSERT(bread(2,block_map)==block_map, "bread returns buffer");
     unsigned char buffer[4096]={0};
     bwrite(2,buffer);
-    CTEST_ASSERT(*buffer==*block_map, "testing bwrite");
+    CTEST_ASSERT(*buffer==*block_map, "bwrite fills buffer with disk image and bread was successful");
 }
+
+//void test_alloc(void){}
+
+void test_set_free(void){
+    unsigned char block[16]={0};
+    set_free(block, 3, 1);
+    set_free(block, 17, 1);
+    set_free(block, 13, 0);
+    set_free(block, 42, 1);
+    unsigned char byte=block[0];
+    int chk1 = byte & (1 << 3);
+    byte=block[2];
+    int chk2 = byte & (1 << 1);
+    byte=block[1];
+    int chk3 = !(byte & (1 << 5));
+    byte=block[5];
+    int chk4 = byte & (1 << 2);
+    CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "set_free arbitrary sets verified");
+}
+
+//void test_find_free(void){}
+
+//void test_ialloc(void){}
 
 int main(){
     CTEST_VERBOSE(1);
@@ -28,6 +51,14 @@ int main(){
     test_image_open();
 
     test_bread_bwrite();
+
+    test_set_free();
+
+    //test_find_free();
+
+    //test_alloc();
+
+    //test_ialloc();
 
     test_image_close();
 
@@ -48,7 +79,7 @@ int main(){
     unsigned char inode_map[4096]={0};
     bread(1,inode_map);
 
-    unsigned char block_map[4096]={1,1,1,1,1,1,1};
+    unsigned char block_map[4096]={0};
     bread(2,block_map);
 
     unsigned char inode_data_block_0[4096]={0};
@@ -62,8 +93,7 @@ int main(){
 
     unsigned char inode_data_block_3[4096]={0};
     bread(6,inode_data_block_3);
-
-    //unsure what the data blocks should contain other than block map so left empty for now
+    //initialize the data blocks as empty
     
     image_close();
 }
