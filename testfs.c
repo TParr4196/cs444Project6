@@ -41,7 +41,25 @@ void test_set_free(void){
     CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "set_free arbitrary sets verified");
 }
 
-//void test_find_free(void){}
+void test_find_free(void){
+    unsigned char block[4096]={0};
+    for(int i=0; i<BLOCK_SIZE; i++){
+        block[i]=0xff;
+    }
+    CTEST_ASSERT(find_free(block)==-1, "find free returns -1 if block is full");
+    set_free(block, 2, 0);
+    set_free(block, 5, 0);
+    set_free(block, 12, 0);
+    set_free(block, 22, 0);
+    int chk1 = find_free(block)==2;
+    set_free(block, 2, 1);
+    int chk2 = find_free(block)==5;
+    set_free(block, 5, 1);
+    int chk3 = find_free(block)==12;
+    set_free(block, 12, 1);
+    int chk4 = find_free(block)==22;
+    CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "find_free arbitrary empty values verified");
+}
 
 //void test_ialloc(void){}
 
@@ -54,7 +72,7 @@ int main(){
 
     test_set_free();
 
-    //test_find_free();
+    test_find_free();
 
     //test_alloc();
 
