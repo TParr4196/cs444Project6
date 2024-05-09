@@ -67,6 +67,22 @@ void test_ialloc(void){
     }
     bwrite(1, block);
     CTEST_ASSERT(ialloc()==-1, "returns -1 if inode map is full");
+    set_free(block, 4, 0);
+    set_free(block, 6, 0);
+    set_free(block, 15, 0);
+    set_free(block, 24, 0);
+    bwrite(1, block);
+    int chk1 = ialloc()==4;
+    set_free(block, 4, 1);
+    bwrite(1, block);
+    int chk2 = ialloc()==6;
+    set_free(block, 6, 1);
+    bwrite(1, block);
+    int chk3 = ialloc()==15;
+    set_free(block, 15, 1);
+    bwrite(1, block);
+    int chk4 = ialloc()==24;
+    CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "ialloc arbitrary empty values verified");
 }
 
 int main(){
