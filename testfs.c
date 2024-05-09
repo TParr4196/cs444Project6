@@ -21,7 +21,30 @@ void test_bread_bwrite(void){
     CTEST_ASSERT(*bread(2,buffer)==*block_map, "bwrite fills buffer with disk image and bread was successful");
 }
 
-//void test_alloc(void){}
+void test_alloc(void){
+    unsigned char block[4096]={0};
+    for(int i=0; i<BLOCK_SIZE; i++){
+        block[i]=0xff;
+    }
+    bwrite(2, block);
+    CTEST_ASSERT(alloc()==-1, "returns -1 if block map is full");
+    set_free(block, 4, 0);
+    set_free(block, 6, 0);
+    set_free(block, 15, 0);
+    set_free(block, 24, 0);
+    bwrite(2, block);
+    int chk1 = alloc()==4;
+    set_free(block, 4, 1);
+    bwrite(2, block);
+    int chk2 = alloc()==6;
+    set_free(block, 6, 1);
+    bwrite(2, block);
+    int chk3 = alloc()==15;
+    set_free(block, 15, 1);
+    bwrite(2, block);
+    int chk4 = alloc()==24;
+    CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "alloc arbitrary empty values verified");
+}
 
 void test_set_free(void){
     unsigned char block[16]={0};
@@ -67,21 +90,21 @@ void test_ialloc(void){
     }
     bwrite(1, block);
     CTEST_ASSERT(ialloc()==-1, "returns -1 if inode map is full");
-    set_free(block, 4, 0);
-    set_free(block, 6, 0);
-    set_free(block, 15, 0);
-    set_free(block, 24, 0);
+    set_free(block, 30000, 0);
+    set_free(block, 30500, 0);
+    set_free(block, 31000, 0);
+    set_free(block, 32000, 0);
     bwrite(1, block);
-    int chk1 = ialloc()==4;
-    set_free(block, 4, 1);
+    int chk1 = ialloc()==30000;
+    set_free(block, 30000, 1);
     bwrite(1, block);
-    int chk2 = ialloc()==6;
-    set_free(block, 6, 1);
+    int chk2 = ialloc()==30500;
+    set_free(block, 30500, 1);
     bwrite(1, block);
-    int chk3 = ialloc()==15;
-    set_free(block, 15, 1);
+    int chk3 = ialloc()==31000;
+    set_free(block, 31000, 1);
     bwrite(1, block);
-    int chk4 = ialloc()==24;
+    int chk4 = ialloc()==32000;
     CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "ialloc arbitrary empty values verified");
 }
 
@@ -98,7 +121,7 @@ int main(){
 
     test_ialloc();
 
-    //test_alloc();
+    test_alloc();
 
     test_image_close();
 
