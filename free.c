@@ -18,6 +18,20 @@ void set_free(unsigned char *block, int num, int set){
     //source is bitmanip.c from discord: my solution was much clunkier
 }
 
+//my solution:
+//void set_bit(int index, int value)
+//{
+//    int byte=bitmap[index/BITS_PER_BYTE];
+//    int bit_index=1<< index % BITS_PER_BYTE;
+//    if (value == 1){
+//        byte=byte | bit_index;
+//    }
+//    else{
+//        byte=byte & (~bit_index);
+//    }
+//    bitmap[index/BITS_PER_BYTE]=byte;
+//}
+
 int find_free(unsigned char *block){
     unsigned char byte;
 
