@@ -34,14 +34,8 @@ void test_alloc(void){
     set_free(block, 24, 0);
     bwrite(2, block);
     int chk1 = alloc()==4;
-    set_free(block, 4, 1);
-    bwrite(2, block);
     int chk2 = alloc()==6;
-    set_free(block, 6, 1);
-    bwrite(2, block);
     int chk3 = alloc()==15;
-    set_free(block, 15, 1);
-    bwrite(2, block);
     int chk4 = alloc()==24;
     CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "alloc arbitrary empty values verified");
 }
@@ -96,14 +90,8 @@ void test_ialloc(void){
     set_free(block, 32000, 0);
     bwrite(1, block);
     int chk1 = ialloc()==30000;
-    set_free(block, 30000, 1);
-    bwrite(1, block);
     int chk2 = ialloc()==30500;
-    set_free(block, 30500, 1);
-    bwrite(1, block);
     int chk3 = ialloc()==31000;
-    set_free(block, 31000, 1);
-    bwrite(1, block);
     int chk4 = ialloc()==32000;
     CTEST_ASSERT(chk1&&chk2&&chk3&&chk4, "ialloc arbitrary empty values verified");
 }
